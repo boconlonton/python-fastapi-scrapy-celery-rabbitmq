@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "python-fastapi-scrapy-celery-rabbitmq"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "python_fastapi_scrapy_celery_rabbitmq"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+celery = "^5.2.7"
+Scrapy = "^2.7.1"
+fastapi = "^0.88.0"
+flower = "^1.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
