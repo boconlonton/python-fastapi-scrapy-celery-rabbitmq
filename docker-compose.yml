@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+
+  api:
+    build: .
+    ports:
+      - 8000:8000
+    command: uvicorn main:app --host 0.0.0.0 --reload
+    volumes:
+      - ./api:/usr/src/api
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq:rabbitmq@rabbitmq:5672
+      - CELERY_RESULT_BACKEND=amqp://rabbitmq:rabbitmq@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+
+  worker:
+    build: .
+    command: celery worker -A  worker.app_worker --loglevel=info
+    volumes:
+      - ./worker:/usr/src/worker
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq:rabbitmq@rabbitmq:5672
+      - CELERY_RESULT_BACKEND=amqp://rabbitmq:rabbitmq@rabbitmq:5672
+    depends_on:
+      - rabbitmq
+  
+  rabbitmq:
+        image: rabbitmq:3-management-alpine
+        command: rabbitmq-server
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        volumes:
+            - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+            - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+  
+  dashboard:
+    build: .
+    command:  celery flower -A worker.app_worker --loglevel=info
+    ports:
+      - 5556:5555
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq:rabbitmq@rabbitmq:5672
+      - CELERY_RESULT_BACKEND=amqp://rabbitmq:rabbitmq@rabbitmq:5672
+    depends_on:
+      - worker
