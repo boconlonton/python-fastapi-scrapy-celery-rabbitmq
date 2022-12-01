@@ -17,12 +17,20 @@ services:
 
   worker:
     build: .
+<<<<<<< HEAD
     command: celery worker -A  worker.app_worker --loglevel=info
+=======
+    command: celery worker -A  worker --loglevel=info
+>>>>>>> feat/integrate-celery
     volumes:
       - ./worker:/usr/src/worker
     environment:
       - CELERY_BROKER_URL=amqp://rabbitmq:rabbitmq@rabbitmq:5672
+<<<<<<< HEAD
       - CELERY_RESULT_BACKEND=amqp://rabbitmq:rabbitmq@rabbitmq:5672
+=======
+      - CELERY_RESULT_BACKEND=rpc://rabbitmq:rabbitmq@rabbitmq:5672
+>>>>>>> feat/integrate-celery
     depends_on:
       - rabbitmq
   
@@ -38,7 +46,11 @@ services:
   
   dashboard:
     build: .
+<<<<<<< HEAD
     command:  celery flower -A worker.app_worker --loglevel=info
+=======
+    command:  celery flower -A worker --loglevel=info
+>>>>>>> feat/integrate-celery
     ports:
       - 5556:5555
     environment:

@@ -1,6 +1,6 @@
 import time
 
-from worker.app_worker import app
+from worker import celery_app
 
 
 from billiard import Process
@@ -27,7 +27,7 @@ class RunCrawlerScript:
 crawler = RunCrawlerScript()
 
 
-@app.task(name="run_crawler")
+@celery_app.task(name="run_crawler")
 def crawler_task(client_id: int):
     crawler.crawl(client_id)
     return True
